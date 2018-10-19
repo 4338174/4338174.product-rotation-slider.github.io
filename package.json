@@ -8,12 +8,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/4338174/4338174.product-rotation-slider.github.io.git"
+    "url": "git+https://github.com/4338174/product-rotation-slider.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/4338174/4338174.product-rotation-slider.github.io/issues"
+    "url": "https://github.com/4338174/product-rotation-slider/issues"
   },
-  "homepage": "https://github.com/4338174/4338174.product-rotation-slider.github.io#readme"
+  "homepage": "https://github.com/4338174/product-rotation-slider#readme"
 }

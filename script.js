@@ -107,5 +107,7 @@ preloadImages(images).then(function(imgs) {
 	document.body.addEventListener("mousemove", mousemove);
 
 }, function(errImg) {
-    // at least one image failed to load
+	// at least one image failed to load
+	console.log(errImg);
+	
 });
