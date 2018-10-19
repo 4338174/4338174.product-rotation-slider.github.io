@@ -8,7 +8,7 @@ let prloadedImgElements = [];
 let activeImage = 0;
 
 for(i=0; i<61; i++) {
-	images.push(`./images/nuts_${i}.png`);
+	images.push(`./images/small/nuts_${i}.png`);
 }
 console.log(images);
 
@@ -52,8 +52,8 @@ function ondrag(currentPosition) {
 
 // replace img element src
 function replaceImgElement(newImgElement) {
-	// sliderElement.replaceChild(newImgElement, sliderElement.querySelector('img'));
-	sliderElement.querySelector('img').src = newImgElement.src;
+	sliderElement.replaceChild(newImgElement, sliderElement.querySelector('img'));
+	// sliderElement.querySelector('img').src = newImgElement.src;
 }
 
 // loop with delay
