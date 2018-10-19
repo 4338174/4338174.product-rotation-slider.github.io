@@ -21,7 +21,19 @@ function mouseup(event) {
 }
 function mousemove(event) {
 	if(mousedownID==1)
-		ondrag(event.screenX);
+	ondrag(event.screenX);
+}
+
+function touchstart(event) {
+	mousedownID = 1;
+	lastPosition = event.touches[0].screenX;
+}
+function touchend(event) {
+	mousedownID=-1;
+}
+function touchmove(event) {
+	if(mousedownID==1)
+	ondrag(event.touches[0].screenX);
 }
 
 // count up or down in img array
@@ -106,6 +118,12 @@ preloadImages(images).then(function(imgs) {
 	document.body.addEventListener("mouseup", mouseup);
 	document.body.addEventListener("mousemove", mousemove);
 
+	sliderElement.addEventListener('touchstart', touchstart);
+	sliderElement.addEventListener('touchend', touchend);
+	sliderElement.addEventListener('touchmove', touchmove);
+	document.body.addEventListener("touchstart", touchstart);
+	document.body.addEventListener("touchend", touchend);
+	
 }, function(errImg) {
 	// at least one image failed to load
 	console.log(errImg);
