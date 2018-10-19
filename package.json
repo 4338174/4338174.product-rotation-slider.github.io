@@ -1,0 +1,19 @@
+{
+  "name": "4338174.product-rotation-slider.github.io",
+  "version": "1.0.0",
+  "description": "rotate an image sequence with mouse drag",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/4338174/4338174.product-rotation-slider.github.io.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/4338174/4338174.product-rotation-slider.github.io/issues"
+  },
+  "homepage": "https://github.com/4338174/4338174.product-rotation-slider.github.io#readme"
+}
