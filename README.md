@@ -1,2 +1,2 @@
-# 4338174.product-rotation-slider.github.io
-rotate an image sequence with mouse drag
+# image-sequence-slider
+rotate an image sequence with mouse or touch drag
