@@ -1,0 +1,13 @@
+language: node_js
+before_script:
+- npm install
+script:
+- npm run build
+deploy:
+  provider: releases
+  api_key:
+    secure: W99/4xfXvtHTTrosrXrWYYke4+PoUgOjJztaE3av4+jnXw1Vz+qBgbDcPnhJelVI0gtBFfVXciRWNLIKSFhCyIpnUe+73aePFy72lWi9by6YoDKNd6P7Y1UvroTvRzSNjihjM3K1xQrIReJGL2zwlKnWpfftCUXG+jkH4bFAdugw5PxqnH4O/yV2SJA5ae9n8FVCAm3espiHpqTGS76r/rMRS2zfJBcVQzQUFmawEZ1JOYkvCegvY4/lleW2PY2v5XI3r3gxX2p6sntNtw8KO+L7bR6rWNQe+lzAorlPuxFfqcAK+DvS0mbxW6QbSVRGnKYSmWhg1r6Av4KdxbNrs5Umwe2WwmBf/BMSafJaWfOH27OkPWO/+l1dUV/AhPSbVXe3KJxUUICkgJQXKneqYeN/vhwtBvYBiQnrvijlb4NqlGmW5U3Lmi6CVgJAk0gnIMWzU0JsWbtY5Vt8APBR566uITVM1KwM/n6QXs2lPhgrBzsSgcI5CTbeuwuISkBvLy00LUMLc03Zi2PhOMjNUQjY3YGTPeWI/OsLBEXZgUOdqoS/3lsiF5HeJMlookn8totI2Yhgilu0EEVkQGzbT9H1MhzUBhnYh95y3n3wdwjw84h6op9UcOrAMaIddh9+deQjwD/TDT7p6Q/L/Ucf3/84narw/UTxcB4rzbc5RUk=
+  file: "./dist/bundle.js"
+  on:
+    repo: slidario/product-rotation-slider
+    branch: travis-test
