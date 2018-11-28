@@ -5,3 +5,4 @@ rotate an image sequence with mouse or touch drag
 * Run `npm install`
 * Run `npm run build`
 * Open `index.html` in your browser
+
