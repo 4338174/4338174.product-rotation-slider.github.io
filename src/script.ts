@@ -1,129 +1,165 @@
-import {Promise} from 'es6-promise';
+import { Promise } from 'es6-promise';
 
-const sliderElement = document.querySelector('#slider');
-// let sliderImgElement = document.querySelector('#slider > img');
+/**
+ * A 360 degree slider element
+ */
+class Slider {
 
-let mouseDownId = -1;
-const dragOffset = 50;
-let lastPosition: number;
-const images: string[] = [];
-let preloadedImgElements: Element[] = [];
-let activeImage = 0;
+  private activeImage: number;
 
-for (let i = 0; i < 61; i++) {
-  images.push(`./images/small/nuts_${i}.png`);
-}
-console.log(images);
+  private dragOffset: number;
 
-function mouseDown(event: Event) {
-  mouseDownId = 1;
-  lastPosition = (event as MouseEvent).screenX;
-}
-function mouseup() {
-  mouseDownId = -1;
-}
-function mouseMove(event: Event) {
-  if (mouseDownId === 1) {
-    onDrag((event as MouseEvent).screenX);
-  }
-}
+  private lastPosition: number;
 
-function touchStart(event: Event) {
-  mouseDownId = 1;
-  lastPosition = (event as TouchEvent).touches[0].screenX;
-}
-function touchEnd(_event: Event) {
-  mouseDownId = -1;
-}
-function touchMove(event: Event) {
-  if (mouseDownId === 1) {
-    onDrag((event as TouchEvent).touches[0].screenX);
-  }
-}
+  private mouseDownId: number;
 
-// count up or down in img array
-function onDrag(currentPosition: number) {
-  if (currentPosition + dragOffset < lastPosition) {
-    console.log('left');
-    lastPosition = currentPosition;
-    if (activeImage !== images.length - 1) {
-      activeImage = activeImage + 1;
-    } else {
-      activeImage = 0;
+  private preloadedImgElements: Element[];
+
+  private sliderElement: HTMLElement;
+
+  constructor(id: string, private imagePaths: string[], loadingImagePath: string) {
+    const sliderElement = document.getElementById(id);
+
+    if (sliderElement === null) {
+      throw new Error('No slider with id ' + id + ' found.');
     }
 
-    console.log(images[activeImage]);
-    replaceImgElement(preloadedImgElements[activeImage]);
-  }
+    this.activeImage = 0;
+    this.dragOffset = 50;
+    this.lastPosition = 0;
+    this.mouseDownId = -1;
+    this.preloadedImgElements = [];
+    this.sliderElement = sliderElement;
 
-  if (currentPosition - dragOffset > lastPosition) {
-    console.log('right');
-    lastPosition = currentPosition;
-    if (activeImage !== 0) {
-      activeImage = activeImage - 1;
-    } else {
-      activeImage = images.length - 1;
-    }
+    const overlayElement = document.createElement('div');
+    overlayElement.style.width = '100%';
+    overlayElement.style.height = '100%';
+    overlayElement.style.position = 'absolute';
+    this.sliderElement.appendChild(overlayElement);
 
-    console.log(images[activeImage]);
-    replaceImgElement(preloadedImgElements[activeImage]);
-  }
-}
+    const imageElement = document.createElement('img');
+    imageElement.src = loadingImagePath;
+    this.sliderElement.appendChild(imageElement);
 
-// replace img element src
-function replaceImgElement(newImgElement: Element) {
-  if (sliderElement === null) {
-    throw new Error('sliderElement does not exist.');
-  }
-  const img = sliderElement.querySelector('img');
-  if (img === null) {
-    throw new Error('No image found.');
-  }
-  sliderElement.replaceChild(newImgElement, img);
-  // sliderElement.querySelector('img').src = newImgElement.src;
-}
+    this.preloadImages(this.imagePaths).then((imgs: Element[]) => {
+      if (sliderElement === null) {
+        throw new Error('sliderElement does not exist.');
+      }
+      // all images are loaded now and in the array imgs
+      this.preloadedImgElements = imgs;
 
-// preload img elements in array
-function preloadImages(srcs: string[]): Promise<HTMLImageElement[]> {
-    const promises = srcs.map<Promise<HTMLImageElement>>((src) => {
-    return new Promise<HTMLImageElement>((resolve, reject) => {
-      const img = new Image();
-      img.onload = () => {
-        resolve(img);
-      };
-      img.onerror = img.onabort = () => {
-        reject(src);
-      };
-      img.src = src;
+      for (let i = 0; i < this.preloadedImgElements.length; i++) {
+        setTimeout(() => this.replaceImgElement(this.preloadedImgElements[i]), i * 25);
+      }
+
+      sliderElement.addEventListener('mousedown', this.mouseDown);
+      document.body.addEventListener('mouseup', this.mouseUp);
+      document.body.addEventListener('mousemove', this.mouseMove);
+
+      sliderElement.addEventListener('touchstart', this.touchStart);
+      document.body.addEventListener('touchmove', this.touchMove);
+      document.body.addEventListener('touchend', this.touchEnd);
+
+    }, (loadingImageError) => {
+      // at least one image failed to load
+      throw loadingImageError;
     });
-  });
+
+  }
+
+  mouseDown = (event: Event) => {
+    this.mouseDownId = 1;
+    this.lastPosition = (event as MouseEvent).screenX;
+  }
+
+  mouseMove = (event: Event) => {
+    if (this.mouseDownId === 1) {
+      this.onDrag((event as MouseEvent).screenX);
+    }
+  }
+
+  mouseUp = () => {
+    this.mouseDownId = -1;
+  }
+
+  onDrag(currentPosition: number) {
+    if (currentPosition + this.dragOffset < this.lastPosition) {
+      console.log('left');
+      this.lastPosition = currentPosition;
+      if (this.activeImage !== this.imagePaths.length - 1) {
+        this.activeImage = this.activeImage + 1;
+      } else {
+        this.activeImage = 0;
+      }
+
+      console.log(this.imagePaths[this.activeImage]);
+      this.replaceImgElement(this.preloadedImgElements[this.activeImage]);
+    }
+
+    if (currentPosition - this.dragOffset > this.lastPosition) {
+      console.log('right');
+      this.lastPosition = currentPosition;
+      if (this.activeImage !== 0) {
+        this.activeImage = this.activeImage - 1;
+      } else {
+        this.activeImage = this.imagePaths.length - 1;
+      }
+
+      console.log(this.imagePaths[this.activeImage]);
+      this.replaceImgElement(this.preloadedImgElements[this.activeImage]);
+    }
+  }
+
+  preloadImages(srcs: string[]): Promise<HTMLImageElement[]> {
+    const promises = srcs.map<Promise<HTMLImageElement>>((src) => {
+      return new Promise<HTMLImageElement>((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => {
+          resolve(img);
+        };
+        img.onerror = img.onabort = () => {
+          reject(src);
+        };
+        img.src = src;
+      });
+    });
     return Promise.all(promises);
+  }
+
+  replaceImgElement(newImgElement: Element) {
+    const img = this.sliderElement.querySelector('img');
+    if (img === null) {
+      throw new Error('No image found.');
+    }
+    this.sliderElement.replaceChild(newImgElement, img);
+    // sliderElement.querySelector('img').src = newImgElement.src;
+  }
+
+  touchEnd = (_event: Event) => {
+    this.mouseDownId = -1;
+  }
+
+  touchMove = (event: Event) => {
+    if (this.mouseDownId === 1) {
+      this.onDrag((event as TouchEvent).touches[0].screenX);
+    }
+  }
+
+  touchStart = (event: Event) => {
+    this.mouseDownId = 1;
+    this.lastPosition = (event as TouchEvent).touches[0].screenX;
+  }
 }
 
-preloadImages(images).then((imgs: Element[]) => {
-  if (sliderElement === null) {
-    throw new Error('sliderElement does not exist.');
-  }
-  // all images are loaded now and in the array imgs
-  preloadedImgElements = imgs;
-
-  for (let i = 0; i < preloadedImgElements.length; i++) {
-    setTimeout(() => replaceImgElement(preloadedImgElements[i]), i * 25);
-  }
-
-  sliderElement.addEventListener('mousemove', mouseMove);
-  sliderElement.addEventListener('mousedown', mouseDown);
-  sliderElement.addEventListener('mouseup', mouseup);
-  document.body.addEventListener('mouseup', mouseup);
-  document.body.addEventListener('mousemove', mouseMove);
-
-  sliderElement.addEventListener('touchstart', touchStart);
-  sliderElement.addEventListener('touchend', touchEnd);
-  sliderElement.addEventListener('touchmove', touchMove);
-  document.body.addEventListener('touchstart', touchStart);
-  document.body.addEventListener('touchend', touchEnd);
-
-}, (errImg) => {
-  // at least one image failed to load
-  console.log(errImg);
-});
+export const slider = new Slider(
+  'slider',
+  [
+    './images/nuts_0.png',
+    './images/nuts_1.png',
+    './images/nuts_2.png',
+    './images/nuts_3.png',
+    './images/nuts_4.png',
+    './images/nuts_5.png',
+  ],
+  './assets/loading_icon.gif',
+  );
