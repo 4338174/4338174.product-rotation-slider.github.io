@@ -60,4 +60,8 @@ typings/
 # next.js build output
 .next
 
-# lib/
+# ignore lib files
+lib/
+
+# ignore bundle files
+dist/
